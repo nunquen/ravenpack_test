@@ -1,6 +1,12 @@
 # STEPS DONE
 ## ✅ Setup environment on Mac OS.
 - ⚠️ Couldn't install python3.8 as it's deprecated so python 3.9 was installed instead.
+```
+python3.9 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ## ✅ Have the project in github.
 
@@ -26,9 +32,17 @@
     - Bugs found in CustomsDetectorSoftware._process_item:
         - startswith('Any type of') was applied to item instead of expected object for both ACCEPT and REJECT cases
         - ask_universe now is properly implemented: if the items does not exist in the universe, the we ask and store
+    - Code fixed and 87% of coverage acchieved.
+    - All string comparisson is done with lowercase to avoid typo errors.
 
+### Refactoring
+    - CustomsDetectorSoftware
+        - universe_memory now saves and loads in a separate universe file
+    - Create adapters
+        - file_adapter
+        - redis_adapter
+        
 
-- Introduce best practices: lint, exception handling, etc.
-- Refactor.
-- Include precommit: black, lint and flake8.
-- Create Docker images and run in docker as a rest api service.
+### Introduce best practices: lint, exception handling, etc.
+### Include precommit: black, lint and flake8.
+### Create Docker images and run in docker as a rest api service.

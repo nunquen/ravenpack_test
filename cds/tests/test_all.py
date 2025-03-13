@@ -39,32 +39,37 @@ def test_good_characters(good_characters_list):
         (
             "Sandy Cheeks,     Candy, Space Suit, Towel, Toothpaste, Toothbrush,  ACCEPT",
             True,
-            "Accepting Sandy Cheeks",
+            "> Accepting Sandy Cheeks",
         ),
         (
             "Spike Spiegel,    Space Cowboy Hat, Smokes, Towel,                   REJECT",
             False,
-            "Rejecting Spike Spiegel",
+            "> Rejecting Spike Spiegel",
         ),
         (
             "Hyperactive Kid,  Water gun, Candy, Towel, Toothbrush,               REJECT",
             False,
-            "Rejecting Hyperactive Kid",
+            "> Rejecting Hyperactive Kid",
         ),
         (
             "Luna TikTok,      Camera, Selfie Stick,                              REJECT",
             False,
-            "Rejecting Luna TikTok",
+            "> Rejecting Luna TikTok",
         ),
         (
             "Clark Kent,       Towel, Cape, Glasses,                              ACCEPT",
             True,
-            "Accepting Clark Kent",
+            "> Accepting Clark Kent",
         ),
         (
             "Sam Bell,         Old Recordings, Towel, Glasses,                    REJECT",
             False,
-            "Rejecting Sam Bell",
+            "> Rejecting Sam Bell",
+        ),
+        (
+            "Saul Maldonado,   Paparoach Old Recordings, Towel, Glasses,          ACCEPT",
+            True,
+            "> Accepting Saul Maldonado",
         ),
     ]
 )

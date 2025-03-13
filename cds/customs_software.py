@@ -1,9 +1,6 @@
-import random
 from contextlib import suppress
-from datetime import datetime
 
-
-UNIVERSE_MEANING = 42
+from cds.config import appconfig
 
 
 class CustomsDetectorSoftware:
@@ -12,60 +9,48 @@ class CustomsDetectorSoftware:
     dangerous_items = []
 
     def __init__(self, safe_items=[], dangerous_items=[]):
-        self.universe_memory = self._load_dangerous_items()
+        self.universe_memory = self._load_universe_items()
         self.safe_items = safe_items
         self.dangerous_items = dangerous_items
 
-    def _load_dangerous_items(self):
+    def _load_universe_items(self):
         return {}
 
-    def _save_dangerous_items(self):
+    def _save_universe_items(self):
         return {}
 
     def process_entry(self, items) -> bool:
         for item in items:
-            if self._process_item(item) == 'REJECT':
+            if self._process_item(item) == appconfig.DECISION.REJECT:
                 return False
         return True
 
     def _process_item(self, item: str):
-        decision = None
-        universe_says = None
+        """Determines whether an item is ACCEPTED or REJECTED."""
+        prefix = "any type of "
 
+        # Check directly in safe items
+        if item in self.safe_items:
+            return appconfig.DECISION.ACCEPT
+
+        # Check if item matches any safe type pattern
         for obj in self.safe_items:
-            if item == obj:
-                decision = 'ACCEPT'
-                return decision
-            elif obj.startswith('Any type of'):
-                safe_item_type = obj.replace('Any type of ', '')
-                if safe_item_type in item:
-                    decision = 'ACCEPT'
-                    return decision
+            if obj.lower().startswith(prefix) and obj[len(prefix):].lower() in item.lower():
+                return appconfig.DECISION.ACCEPT
 
+        # Check directly in dangerous items
+        if item in self.dangerous_items:
+            return appconfig.DECISION.REJECT
+
+        # Check if item matches any dangerous type pattern
         for obj in self.dangerous_items:
-            if obj == item:
-                decision = 'REJECT'
-                return decision
-            elif obj.startswith('Any type of'):
-                dangerous_item_type = obj.replace('Any type of', '')
-                if dangerous_item_type in item:
-                    decision = 'REJECT'
-                    return decision
+            if obj.lower().startswith(prefix) and obj[len(prefix):].lower() in item.lower():
+                return appconfig.DECISION.REJECT
 
         if item not in self.universe_memory:
-            universe_says = ask_universe(item)
-            self.universe_memory[item] = universe_says
+            self.universe_memory[item] = ask_universe(item)
 
-            # universe_says = self.universe_memory.get(item)
-            # if universe_says is True:
-            #     self.universe_memory[item] = 'ACCEPT'
-            # if universe_says is False:
-            #     self.universe_memory[item] = 'REJECT'
-
-            # universe_says = ask_universe(item)
-            # self.universe_memory[item] = universe_says
-
-        return "ACCEPT" if self.universe_memory[item] else "REJECT"
+        return appconfig.DECISION.ACCEPT if self.universe_memory[item] else appconfig.DECISION.REJECT
 
 
 def ask_universe(item: str) -> bool:
@@ -78,7 +63,7 @@ def ask_universe(item: str) -> bool:
     for y in item:
         with suppress(Exception):
             for y in item:
-                w = ord(y) - UNIVERSE_MEANING
+                w = ord(y) - appconfig.UNIVERSE_MEANING
                 if chr(w) == '7' or (w == 23 and ord(y) in map(ord, item)):
                     return True
 
