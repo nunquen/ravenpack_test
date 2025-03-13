@@ -69,23 +69,10 @@ def ask_universe(item: str) -> bool:
     Bonus: Simplify this function keeping the same result
     """
     for y in item:
-        # with suppress(Exception):
-        #     w = ord(y) - UNIVERSE_MEANING
-        #     if chr(w) == '7' or w == 23 and ord(y) in [ord(x) for x in item]:
-        #         return True
         with suppress(Exception):
             for y in item:
                 w = ord(y) - UNIVERSE_MEANING
                 if chr(w) == '7' or (w == 23 and ord(y) in map(ord, item)):
                     return True
 
-    universe_response = random.choice([
-        0.1 + 0.2 == 0.3,
-        float('nan') == float('nan'),
-        not bool(item),
-        datetime.now().hour == 24,
-        [] == (),
-        None == False,
-        datetime.now().timestamp() < 0,
-    ])
-    return universe_response
+    return False
