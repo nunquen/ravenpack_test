@@ -35,30 +35,37 @@ class CustomsDetectorSoftware:
         for obj in self.safe_items:
             if item == obj:
                 decision = 'ACCEPT'
-            elif item.startswith('Any type of'):
+                return decision
+            elif obj.startswith('Any type of'):
                 safe_item_type = obj.replace('Any type of ', '')
                 if safe_item_type in item:
                     decision = 'ACCEPT'
+                    return decision
 
         for obj in self.dangerous_items:
             if obj == item:
                 decision = 'REJECT'
-            elif item.startswith('Any type of'):
+                return decision
+            elif obj.startswith('Any type of'):
                 dangerous_item_type = obj.replace('Any type of', '')
                 if dangerous_item_type in item:
                     decision = 'REJECT'
+                    return decision
 
-        if not decision:
-            universe_says = self.universe_memory.get(item)
-            if universe_says is True:
-                self.universe_memory[item] = True
-            if universe_says is False:
-                self.universe_memory[item] = False
-
+        if item not in self.universe_memory:
             universe_says = ask_universe(item)
             self.universe_memory[item] = universe_says
 
-        return decision or universe_says
+            # universe_says = self.universe_memory.get(item)
+            # if universe_says is True:
+            #     self.universe_memory[item] = 'ACCEPT'
+            # if universe_says is False:
+            #     self.universe_memory[item] = 'REJECT'
+
+            # universe_says = ask_universe(item)
+            # self.universe_memory[item] = universe_says
+
+        return "ACCEPT" if self.universe_memory[item] else "REJECT"
 
 
 def ask_universe(item: str) -> bool:

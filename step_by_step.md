@@ -5,13 +5,13 @@
 ## ✅ Have the project in github.
 
 ### Test and fix project output.
-#### Improvements on ask_universe functions
+#### Improvements on ask_universe function
     - Replaced list comprehension with as it's more efficient:
         - First validation: ascii evaluation.
             - Map consumes less memory as it'll not evaluate all items inmediately
                 -> map will yield values one at a time instead of storing them.
         - Second validation: Random choices.
-            - After reviewing all of the choices, it returns that all of them are False.
+            - After reviewing all of the choices, it turns that all of them are False.
             random.choice([
                 0.1 + 0.2 == 0.3,               # False: due to floating-point precision errors
                 float('nan') == float('nan'),   # False: as NaN is never equal to itself
@@ -22,10 +22,13 @@
                 datetime.now().timestamp() < 0, # False: current timestamps are always positive (unless we go back in time some years from now)
             ])
                 -> Random.choice is replaced with a return False
+#### Doing all required tests
+    - Bugs found in CustomsDetectorSoftware._process_item:
+        - startswith('Any type of') was applied to item instead of expected object for both ACCEPT and REJECT cases
+        - ask_universe now is properly implemented: if the items does not exist in the universe, the we ask and store
 
 
-
-- Improve code and add exception handling.
+- Introduce best practices: lint, exception handling, etc.
 - Refactor.
 - Include precommit: black, lint and flake8.
 - Create Docker images and run in docker as a rest api service.

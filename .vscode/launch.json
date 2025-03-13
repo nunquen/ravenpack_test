@@ -12,6 +12,19 @@
             "PYTHONPATH": "${workspaceFolder}"
         },
         "justMyCode": false
+    },
+    {
+        "name": "Python: pytest",
+        "type": "python",
+        "request": "launch",
+        "module": "pytest",
+        "args": [
+            "-v",
+            "--disable-warnings",
+            "cds/tests/test_all.py",
+        ],
+        "console": "integratedTerminal",
+        "justMyCode": false
     }
 ]
 }
