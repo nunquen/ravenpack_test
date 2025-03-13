@@ -36,12 +36,10 @@ pip install -r requirements.txt
     - All string comparisson is done with lowercase to avoid typo errors.
 
 ### Refactoring
-    - CustomsDetectorSoftware
-        - universe_memory now saves and loads in a separate universe file
     - Create adapters
         - file_adapter
-        - redis_adapter
-        
+    - CustomsDetectorSoftware
+        - universe_memory: implement read and store 
 
 ### Introduce best practices: lint, exception handling, etc.
 ### Include precommit: black, lint and flake8.

@@ -17,7 +17,7 @@ CURRENT_DIRECTORY = Path(__file__).parent
 def parse_passenger(values: List[str]) -> Passenger:
     person_name = values[0].strip()
     items = [item.strip() for item in values[1:-1]]
-    approval_status = values[-1].strip() == appconfig.DECISION.ACCEPT
+    approval_status = values[-1].strip() == appconfig.DECISION.ACCEPT.value
     return Passenger(person_name=person_name, items=items, approval_status=approval_status)
 
 
