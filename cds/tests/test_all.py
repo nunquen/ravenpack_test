@@ -1,19 +1,11 @@
 import pytest
-from pathlib import Path
 
 from cds.customs_software import ask_universe
-from cds.main import parse_passenger, read_storage
+from cds.main import parse_passenger
 from cds.customs_software import CustomsDetectorSoftware
 
 
-CURRENT_DIRECTORY = Path(__file__).parent
-# PASSENGER_MANIFEST = CURRENT_DIRECTORY.joinpath('../../passenger_manifest.csv').resolve(strict=True)
-STORAGE_PATH = CURRENT_DIRECTORY.joinpath('../../storage/').resolve(strict=True)
-
-cds = CustomsDetectorSoftware(
-        safe_items=read_storage(STORAGE_PATH.joinpath("safe.txt")),
-        dangerous_items=read_storage(STORAGE_PATH.joinpath("dangerous.txt")),
-    )
+cds = CustomsDetectorSoftware()
 
 
 def test_universe_fundamentals():
@@ -70,6 +62,11 @@ def test_good_characters(good_characters_list):
             "Saul Maldonado,   Paparoach Old Recordings, Towel, Glasses,          ACCEPT",
             True,
             "> Accepting Saul Maldonado",
+        ),
+        (
+            "Bad cowbow,    Black Cowboy hAT, Smokes, Towel,                      REJECT",
+            False,
+            "> Rejecting Bad cowbow aand testing lower casing comparison",
         ),
     ]
 )

@@ -7,7 +7,6 @@ from typing import List
 
 from cds.config import appconfig
 from cds.customs_software import CustomsDetectorSoftware
-from cds.libs.utils import read_storage
 from cds.models.passanger import Passenger
 
 
@@ -30,13 +29,9 @@ def check_passenger_status(approval_status: bool, passenger: Passenger):
 
 
 if __name__ == "__main__":
-    STORAGE_PATH = CURRENT_DIRECTORY.joinpath("../storage").resolve(strict=True)
     PASSENGER_MANIFEST_FILE = CURRENT_DIRECTORY.joinpath("../passenger_manifest.csv").resolve(strict=True)
 
-    cds = CustomsDetectorSoftware(
-        safe_items=read_storage(STORAGE_PATH.joinpath("safe.txt")),
-        dangerous_items=read_storage(STORAGE_PATH.joinpath("dangerous.txt")),
-    )
+    cds = CustomsDetectorSoftware()
 
     with open(PASSENGER_MANIFEST_FILE, newline="") as csvfile:
         csv_reader = csv.reader(csvfile)

@@ -1,17 +1,23 @@
 from contextlib import suppress
+from pathlib import Path
+from typing import Dict, List
 
 from cds.config import appconfig
+from cds.libs.utils import read_storage
+
+
+CURRENT_DIRECTORY = Path(__file__).parent
 
 
 class CustomsDetectorSoftware:
-    universe_memory: dict
-    safe_items = []
-    dangerous_items = []
+    STORAGE_PATH: str = CURRENT_DIRECTORY.joinpath("../storage").resolve(strict=True)
+    _safe_items: List = read_storage(STORAGE_PATH.joinpath("safe.txt"))
+    _dangerous_items: List = read_storage(STORAGE_PATH.joinpath("dangerous.txt"))
 
-    def __init__(self, safe_items=[], dangerous_items=[]):
-        self.universe_memory = self._load_universe_items()
-        self.safe_items = safe_items
-        self.dangerous_items = dangerous_items
+    def __init__(self):
+        self.universe_memory: Dict = self._load_universe_items()
+        self.safe_items: List = CustomsDetectorSoftware._safe_items
+        self.dangerous_items: List = CustomsDetectorSoftware._dangerous_items
 
     def _load_universe_items(self):
         return {}
