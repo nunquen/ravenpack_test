@@ -12,7 +12,9 @@ CURRENT_DIRECTORY = Path(__file__).parent
 
 
 if __name__ == "__main__":
-    PASSENGER_MANIFEST_FILE = CURRENT_DIRECTORY.joinpath("../passenger_manifest.csv").resolve(strict=True)
+    PASSENGER_MANIFEST_FILE = CURRENT_DIRECTORY.joinpath(
+        "../passenger_manifest.csv"
+    ).resolve(strict=True)
 
     cds = CustomsDetectorSoftware()
 

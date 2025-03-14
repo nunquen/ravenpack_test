@@ -13,8 +13,8 @@ def test_universe_fundamentals():
     """
     If this test fails: Please contact your test provider!
     """
-    assert ask_universe('supercalifragilisticexpialidocious'),  "Good fundamental"
-    assert not ask_universe('Incomprehensibilities Strengths'), "Bad fundamental"
+    assert ask_universe("supercalifragilisticexpialidocious"), "Good fundamental"
+    assert not ask_universe("Incomprehensibilities Strengths"), "Bad fundamental"
 
 
 @pytest.fixture
@@ -28,7 +28,8 @@ def test_good_characters(good_characters_list):
 
 
 @pytest.mark.parametrize(
-    "manifest, expected_valuation, description", [
+    "manifest, expected_valuation, description",
+    [
         (
             "Sandy Cheeks,     Candy, Space Suit, Towel, Toothpaste, Toothbrush,  ACCEPT",
             True,
@@ -69,7 +70,7 @@ def test_good_characters(good_characters_list):
             False,
             "> Rejecting Bad cowbow aand testing lower casing comparison",
         ),
-    ]
+    ],
 )
 def test_manifest(manifest, expected_valuation, description):
     items = manifest.split(",")

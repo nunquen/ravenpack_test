@@ -6,6 +6,13 @@ python3.9 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+pre-commit install
+
+#run
+python -m cds.main
+
+#test
+python -m pytest cds/tests/test_all.py
 ```
 
 ## ✅ Have the project in github.
@@ -47,7 +54,6 @@ pip install -r requirements.txt
                 - universe_memory: read and store json file implemented
         - tests: pytest testing using fixtures and parametrize functionalities.
 
-
-### Introduce best practices: lint, exception handling, etc.
 ### Include precommit: black, lint and flake8.
-### Create Docker images and run in docker as a rest api service.
+    - Precommit was included with: black, flake8 and pylint
+    - test are excluded from pylint. Bypass was done to skip E0401

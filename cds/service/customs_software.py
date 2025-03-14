@@ -1,3 +1,8 @@
+"""
+This module provides the implementation of the CustomsDetectorSoftware class,
+which processes items at customs checkpoints to determine their acceptance status.
+It utilizes various adapters for item storage and evaluation, including file-based storage.
+"""
 from contextlib import suppress
 from pathlib import Path
 from typing import Dict, List
@@ -25,12 +30,15 @@ class CustomsDetectorSoftware:
     based on predefined safe and dangerous item lists. If an item is not found in these lists,
     it consults an external "universe" evaluator.
     """
+
     def __init__(self):
         self.adapter = adapter_class()
 
         self.universe_memory: Dict[str, str] = self.adapter.get_universe_items()
-        self.safe_items: List = self.adapter.get_items(type=ItemType.SAFE)
-        self.dangerous_items: List = self.adapter.get_items(type=ItemType.DANGEROUS)
+        self.safe_items: List = self.adapter.get_items(item_type=ItemType.SAFE)
+        self.dangerous_items: List = self.adapter.get_items(
+            item_type=ItemType.DANGEROUS
+        )
 
     def process_entry(self, items: List[str]) -> bool:
         """
@@ -51,7 +59,7 @@ class CustomsDetectorSoftware:
         """
         Evaluates whether a given item should be ACCEPTED or REJECTED.
 
-        The function first checks predefined safe and dangerous lists. If an item is 
+        The function first checks predefined safe and dangerous lists. If an item is
         not explicitly listed, it queries the external "universe" evaluation.
 
         Args:
@@ -68,7 +76,10 @@ class CustomsDetectorSoftware:
 
         # Check if item matches any safe type pattern
         for obj in self.safe_items:
-            if obj.lower().startswith(prefix) and obj[len(prefix):].lower() in item.lower():
+            if (
+                obj.lower().startswith(prefix)
+                and obj[len(prefix) :].lower() in item.lower()  # noqa: E203
+            ):
                 return appconfig.DECISION.ACCEPT
 
         # Check directly in dangerous items
@@ -77,14 +88,21 @@ class CustomsDetectorSoftware:
 
         # Check if item matches any dangerous type pattern
         for obj in self.dangerous_items:
-            if obj.lower().startswith(prefix) and obj[len(prefix):].lower() in item.lower():
+            if (
+                obj.lower().startswith(prefix)
+                and obj[len(prefix) :].lower() in item.lower()  # noqa: E203
+            ):
                 return appconfig.DECISION.REJECT
 
         if item not in self.universe_memory:
             self.universe_memory[item] = ask_universe(item)
             self.adapter.save_universe_items(items=self.universe_memory)
 
-        return appconfig.DECISION.ACCEPT if self.universe_memory[item] else appconfig.DECISION.REJECT
+        return (
+            appconfig.DECISION.ACCEPT
+            if self.universe_memory[item]
+            else appconfig.DECISION.REJECT
+        )
 
 
 def ask_universe(item: str) -> bool:
@@ -107,11 +125,10 @@ def ask_universe(item: str) -> bool:
         - Uses a character transformation logic to determine safety.
         - Suppresses exceptions to avoid unintended crashes.
     """
-    for y in item:
-        with suppress(Exception):
-            for y in item:
-                w = ord(y) - appconfig.UNIVERSE_MEANING
-                if chr(w) == '7' or (w == 23 and ord(y) in map(ord, item)):
-                    return True
+    with suppress(Exception):
+        for y in item:
+            w = ord(y) - appconfig.UNIVERSE_MEANING
+            if chr(w) == "7" or (w == 23 and ord(y) in map(ord, item)):
+                return True
 
     return False

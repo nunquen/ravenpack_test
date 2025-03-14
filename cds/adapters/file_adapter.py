@@ -1,15 +1,30 @@
-from .base_adapter import BaseItemAdapter, ItemType
+"""
+File Item Adapter Module
+
+This module defines the adapter pattern for managing item storage in files, specifically for items
+categorized as safe, dangerous, and universe. It includes functions for reading and writing items
+from/to text files and JSON files, along with a class to interact with the storage system.
+
+Key components:
+- Utility functions for reading and writing item data from/to files (`read_storage`, `read_json_storage`,
+  `save_json_storage`).
+- `FileItemAdapter`: An implementation of `BaseItemAdapter` to handle item fetching and saving from files.
+"""
 from pathlib import Path
 from typing import Dict, List
 
 import json
 import logging
 
+from .base_adapter import BaseItemAdapter, ItemType
+
 
 CURRENT_DIRECTORY = Path(__file__).parent
 
 
-def read_storage(file_path: str,) -> List:
+def read_storage(
+    file_path: str,
+) -> List:
     """
     Reads a file and returns its contents as a list of stripped strings.
 
@@ -24,13 +39,10 @@ def read_storage(file_path: str,) -> List:
         Logs an error message if the file cannot be read due to an IOError.
     """
     try:
-        with open(file_path) as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             return [line.strip() for line in file]
     except IOError as ioe:
-        logging.error("Error reading file. '{}': {}".format(
-            file_path,
-            ioe
-        ))
+        logging.error("Error reading file. '{}': {}".format(file_path, ioe))
         return []
 
 
@@ -40,7 +52,7 @@ def read_json_storage(file_path: str) -> Dict[str, str]:
 
     This function attempts to read a JSON file from the provided file path and
     parse it into a dictionary with string keys and string values. If the file
-    does not exist, is improperly formatted, or contains invalid data, the function 
+    does not exist, is improperly formatted, or contains invalid data, the function
     logs an error and returns an empty dictionary.
 
     Args:
@@ -57,15 +69,12 @@ def read_json_storage(file_path: str) -> Dict[str, str]:
         - ValueError: If the JSON file contains invalid data or is not a dictionary.
     """
     try:
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             universe_items = json.load(file)
             return universe_items
 
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        logging.error("Error reading file. '{}': {}".format(
-            file_path,
-            e
-        ))
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as err:
+        logging.error("Error reading file. '{}': {}".format(file_path, err))
         return {}
 
 
@@ -93,22 +102,25 @@ def save_json_storage(file_path: str, items: Dict[str, str]):
     """
     try:
         # Ensure the directory exists
-        with open(file_path, "w") as file:
+        with open(file_path, "w", encoding="utf-8") as file:
             # Write the dictionary as a JSON object, replacing any existing content
             json.dump(items, file, indent=4)
 
-    except (IOError, ValueError) as e:
+    except (IOError, ValueError) as err:
         # Log any file I/O or value-related errors
-        logging.error(f"Error saving file '{file_path}': {e}")
+        logging.error(f"Error saving file '{file_path}': {err}")
 
 
 class FileItemAdapter(BaseItemAdapter):
     """
     Adapter to fetch and save items from files.
     """
+
     def __init__(self):
         super().__init__()
-        self.STORAGE_PATH: str = CURRENT_DIRECTORY.joinpath("../../storage").resolve(strict=True)
+        self.STORAGE_PATH: str = CURRENT_DIRECTORY.joinpath("../../storage").resolve(
+            strict=True
+        )
         self.safe_items: List = read_storage(
             self.STORAGE_PATH.joinpath("{}.txt".format(ItemType.SAFE.value))
         )
@@ -119,33 +131,26 @@ class FileItemAdapter(BaseItemAdapter):
             self.STORAGE_PATH.joinpath("{}.json".format(ItemType.UNIVERSE.value))
         )
 
-    def get_items(
-        self,
-        type: ItemType
-    ) -> List[str]:
+    def get_items(self, item_type: ItemType) -> List[str]:
         """
-        Retrieves a list of items based on the specified type.
+        Retrieves a list of items based on the specified item_type.
 
         Args:
-            type (ItemType): The category of items to fetch. Can be:
+            item_type (ItemType): The category of items to fetch. Can be:
                 - ItemType.SAFE: Returns a list of safe items.
                 - ItemType.DANGEROUS: Returns a list of dangerous items.
 
         Returns:
-            List[str]: A list of items corresponding to the given type.
+            List[str]: A list of items corresponding to the given item_type.
         """
-        return self.safe_items if type == ItemType.SAFE else self.dangerous_items
+        return self.safe_items if item_type == ItemType.SAFE else self.dangerous_items
 
-    def save_items(
-        self,
-        type: str,
-        value: List[str]
-    ):
+    def save_items(self, item_type: str, value: List[str]):
         """
-        Saves a list of items to a corresponding file based on the item type.
+        Saves a list of items to a corresponding file based on the item item_type.
 
         Args:
-            type (str): The category of items to save. Expected values:
+            item_type (str): The category of items to save. Expected values:
                 - "safe" for safe items.
                 - "dangerous" for dangerous items.
             value (List[str]): A list of items to be saved.
@@ -157,18 +162,18 @@ class FileItemAdapter(BaseItemAdapter):
             - This function should write the given items to a predefined storage location.
             - Ensure proper handling of file operations to avoid data loss.
         """
-        pass  # TODO: Implement file writing logic
+        # Implement file writing logic
 
     def get_universe_items(self) -> Dict[str, str]:
         """
         Fetches items from a JSON file and returns their evaluation status.
 
-        This method reads a JSON file containing the evaluation status of items and 
-        returns it as a dictionary where the keys are item names and the values are 
+        This method reads a JSON file containing the evaluation status of items and
+        returns it as a dictionary where the keys are item names and the values are
         their evaluation status (e.g., "ACCEPT" or "REJECT").
 
         Returns:
-            Dict[str, str]: A dictionary where keys are item names and values are their evaluation 
+            Dict[str, str]: A dictionary where keys are item names and values are their evaluation
                             status (e.g., "ACCEPT" or "REJECT").
         """
         return self.universe_items
@@ -179,5 +184,5 @@ class FileItemAdapter(BaseItemAdapter):
 
         save_json_storage(
             self.STORAGE_PATH.joinpath("{}.json".format(ItemType.UNIVERSE.value)),
-            items=self.universe_items
+            items=self.universe_items,
         )

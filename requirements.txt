@@ -1,3 +1,4 @@
 logging
 pytest
 pytest-cov
+pre-commit
