@@ -40,9 +40,11 @@ pip install -r requirements.txt
         - config: all configuration required for the project to run
         - models: define the basic data structure
         - adapters: base on abastract classes, the item fetching and saving is disconnected from service layer
+            - Currently only file adapter is iimplemented
+            - Next step: a redis adapter could be implemented 
         - service: holds business logic
             - CustomsDetectorSoftware
-                - universe_memory: implement read and store
+                - universe_memory: read and store json file implemented
         - tests: pytest testing using fixtures and parametrize functionalities.
 
 
