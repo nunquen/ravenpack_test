@@ -1,8 +1,9 @@
 import pytest
 
-from cds.customs_software import ask_universe
+from cds.service.customs_software import ask_universe
 from cds.main import parse_passenger
-from cds.customs_software import CustomsDetectorSoftware
+from cds.service.customs_software import CustomsDetectorSoftware
+from cds.adapters.file_adapter import read_storage
 
 
 cds = CustomsDetectorSoftware()
@@ -75,3 +76,12 @@ def test_manifest(manifest, expected_valuation, description):
     passenger = parse_passenger(items)
     approval_status = cds.process_entry(passenger.items)
     assert approval_status == expected_valuation, description
+
+
+@pytest.fixture
+def get_dummy_file_path():
+    yield "/this/is/a/dummy/file_path.txt"
+
+
+def test_file_adapater(get_dummy_file_path):
+    assert read_storage(file_path=get_dummy_file_path) == []

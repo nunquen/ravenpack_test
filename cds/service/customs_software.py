@@ -2,22 +2,28 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Dict, List
 
+from cds.adapters.base_adapter import ItemType
 from cds.config import appconfig
-from cds.libs.utils import read_storage
+from cds.adapters.file_adapter import FileItemAdapter
 
 
 CURRENT_DIRECTORY = Path(__file__).parent
+PROVIDER_MAPPING = {
+    "fileItem": FileItemAdapter,
+}
+
+adapter_class = PROVIDER_MAPPING.get(appconfig.PROVIDER)
+if not adapter_class:
+    raise ValueError("Provider {} is not supported.".format(appconfig.PROVIDER))
 
 
 class CustomsDetectorSoftware:
-    STORAGE_PATH: str = CURRENT_DIRECTORY.joinpath("../storage").resolve(strict=True)
-    _safe_items: List = read_storage(STORAGE_PATH.joinpath("safe.txt"))
-    _dangerous_items: List = read_storage(STORAGE_PATH.joinpath("dangerous.txt"))
-
     def __init__(self):
+        adapter = adapter_class()
+
         self.universe_memory: Dict = self._load_universe_items()
-        self.safe_items: List = CustomsDetectorSoftware._safe_items
-        self.dangerous_items: List = CustomsDetectorSoftware._dangerous_items
+        self.safe_items: List = adapter.get_items(type=ItemType.SAFE)
+        self.dangerous_items: List = adapter.get_items(type=ItemType.DANGEROUS)
 
     def _load_universe_items(self):
         return {}

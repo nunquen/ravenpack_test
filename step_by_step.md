@@ -36,10 +36,15 @@ pip install -r requirements.txt
     - All string comparisson is done with lowercase to avoid typo errors.
 
 ### Refactoring
-    - Create adapters
-        - file_adapter
-    - CustomsDetectorSoftware
-        - universe_memory: implement read and store 
+    - New project structure:
+        - config: all configuration required for the project to run
+        - models: define the basic data structure
+        - adapters: base on abastract classes, the item fetching and saving is disconnected from service layer
+        - service: holds business logic
+            - CustomsDetectorSoftware
+                - universe_memory: implement read and store
+        - tests: pytest testing using fixtures and parametrize functionalities.
+
 
 ### Introduce best practices: lint, exception handling, etc.
 ### Include precommit: black, lint and flake8.
